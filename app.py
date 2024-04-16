@@ -1,16 +1,29 @@
-
-from fastapi import FastAPI
+import asyncio
+import uvicorn
+import databseConn
 import mqqt_publish
+from fastapi import FastAPI
+
 app = FastAPI()
 
+mensaje = None
 
-mensaje = mqqt_publish.publish_message(str("Hol"))
-mensaje1 = mqqt_publish.suscribe_message()
+async def suscribe_mqtt_messages():
+    global mensaje
+    while True:
+        mensaje = await mqqt_publish.suscribe_message()
+        print("Nuevo mensaje MQTT recibido:", mensaje)
+
 @app.get("/")
 def read_root():
-    return mensaje1
+    if mensaje:
+        return {"mensaje": mensaje}
+    else:
+        return {"mensaje": "No hay mensajes disponibles"}
 
 if __name__ == "__main__":
-    import uvicorn
-
+    print("-----------------Servidor iniciado----------------")
+    databseConn.verificar_conexion()
+    print("Esperando mensajes MQTT...")
+    asyncio.run(suscribe_mqtt_messages())
     uvicorn.run(app)
