@@ -1,11 +1,20 @@
 # Project Name
 
-A brief description of your project.
+SERVER_PY_MQTT
+
+# Description
+
+Este proyecto consiste en una aplicación que recopila datos de sensores a través de MQTT y los almacena en una base de datos utilizando FastAPI.
 
 ## Table of Contents
 
 - [Installation](#installation)
-    install mosquitto
+- [Contributing](#contributing)
+- [License](#license)
+
+## Installation
+
+    Instalar mosquitto [Download](https://mosquitto.org/download/)
     Añadir ruta a PATH
     Agregar reglas de entrada y salida en firewall al puerto 1883
     Añadir el siguiente codigo a /mosquitto/mosquitto.conf
@@ -13,22 +22,21 @@ A brief description of your project.
         allow_anonymous true
 
     net start mosquitto
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
 
-## Installation
+    Modificar credenciales de acceso a base de datos (host, user, pass, db)
 
-Instructions on how to install and set up your project.
+    Crear entorno virtual
+    Installar las dependencias necesarias:
 
-## Usage
-
-Guidelines on how to use your project and any relevant examples.
-
+        ```bash
+        pip install -r requirements.txt
+        ```
+    Ejectutar servidor 
+        ```bash
+        python app.py
+        ```
+    
 ## Contributing
 
-Information on how others can contribute to your project.
+Las contribuciones son bienvenidas! Si desea contribuir a este proyecto, por favor abra un problema o envíe una solicitud de extracción con sus cambios.
 
-## License
-
-Specify the license under which your project is distributed.

@@ -4,7 +4,7 @@ import mysql.connector
 DB_HOST = "localhost"
 DB_USER = "root"
 DB_PASSWORD = ""
-DB_NAME = "serverSensores"
+DB_NAME = "test"
 
 # Función para obtener la conexión a la base de datos
 def get_db_connection():
