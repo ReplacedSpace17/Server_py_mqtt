@@ -1,9 +1,25 @@
 import datetime
 import time
+
+import requests
 from vars.db_config import get_db_connection
 
 MAX_INTENTOS = 3  # Número máximo de intentos de conexión
 
+#verificar_conexion_internet()
+def verificar_conexion_internet():
+    intentos = 0
+    while intentos < MAX_INTENTOS:
+        try:
+            requests.get("http://www.google.com", timeout=5)
+            print("Conexión a Internet exitosa")
+            return True
+        except requests.ConnectionError:
+            print("Error al conectar a Internet. Reintentando...")
+            intentos += 1
+            time.sleep(1)
+    print("No se pudo establecer conexión a Internet después de", MAX_INTENTOS, "intentos")
+    return False
 def verificar_conexion():
     intentos = 0
     while intentos < MAX_INTENTOS:

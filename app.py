@@ -20,5 +20,6 @@ if __name__ == "__main__":
     import uvicorn
     print("-----------------Servidor iniciado----------------")
     databseConn.verificar_conexion()
+    databseConn.verificar_conexion_internet()
     print("Esperando mensajes MQTT...")
     uvicorn.run(app)
