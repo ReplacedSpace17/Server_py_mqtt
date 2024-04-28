@@ -22,9 +22,9 @@ async def subscribe_topics(topics: List[TopicItem]):
             print("Id    ",id_dispositivo)# Separar el ID del dispositivo y el mensaje
             print("Mensaje    ",mensaje)
             print("Sensor    ",sensor)
-            print(type(topic_item.topico))
-            print(topic_item.topico)
-            databseConn.guardar_en_mysql(topic_item.topico,mensaje,id_dispositivo,sensor)
+            print(type(message.topic))
+            print(message.topic)
+            databseConn.guardar_en_mysql(message.topic,id_dispositivo,sensor,mensaje)
         return {"message": "Subscripciones exitosas"}
 
 if sys.platform.lower() == "win32" or os.name.lower() == "nt":
