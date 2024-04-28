@@ -5,3 +5,4 @@ pydantic
 azure-identity
 paho-mqtt
 mysql-connector-python
+asyncio-mqtt
