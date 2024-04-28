@@ -1,62 +1,84 @@
-import datetime
 
+import datetime
 from vars.db_config import get_db_connection
 
+import time
+
+MAX_INTENTOS = 3  # Número máximo de intentos de conexión
 
 
 def verificar_conexion():
-    try:
-        # Establecer conexión con la base de datos MySQL
-        connection = get_db_connection()
+    intentos = 0
+    while intentos < MAX_INTENTOS:
+        try:
+            # Establecer conexión con la base de datos MySQL
+            connection = get_db_connection()
 
-        # Verificar si la conexión fue exitosa
-        if connection.is_connected():
-            print("Conexión exitosa a la base de datos")
-        else:
-            print("Error al conectar a la base de datos")
-            return False
+            # Verificar si la conexión fue exitosa
+            if connection.is_connected():
+                print("Conexión exitosa a la base de datos")
+                return True
+            else:
+                print("Error al conectar a la base de datos")
+                intentos += 1
+                time.sleep(1)  # Esperar un segundo antes de intentar de nuevo
 
-        # Cerrar conexión
-        connection.close()
-        return True
-    except Exception as e:
-        print("Error al conectar a la base de datos:", e)
-        return False
-    
-    
-def guardar_en_mysql(mensaje):
-    # Establecer conexión con la base de datos MySQL
+            # Cerrar conexión
+            connection.close()
+        except Exception as e:
+            print("Error al conectar a la base de datos:", e)
+            intentos += 1
+            time.sleep(1)  # Esperar un segundo antes de intentar de nuevo
+            
+    print("No se pudo establecer conexión después de", MAX_INTENTOS, "intentos")
+    return False
+
+
+def guardar_en_mysql(topico,id, sensor, mensaje):
+    # Verificar la conexión con la base de datos
     connection = get_db_connection()
     
-    # Crear un cursor para ejecutar consultas
-    cursor = connection.cursor()
 
-    # Consulta para crear la tabla si no existe
-    create_table_query = """
-    CREATE TABLE IF NOT EXISTS mensajes (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        fecha DATETIME,
-        valor VARCHAR(255)
-    )
-    """
+    try:
+        # Crear un cursor para ejecutar consultas
+        cursor = connection.cursor()
 
-    # Ejecutar la consulta para crear la tabla
-    cursor.execute(create_table_query)
+        # Consulta para crear la tabla si no existe
+        create_table_query = f"""
+        CREATE TABLE IF NOT EXISTS {topico} (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            fecha DATETIME,
+            id_dispositivo VARCHAR(255),
+            sensor VARCHAR(255),
+            valor VARCHAR(255)
+        )
+        """
 
-    # Obtener la fecha actual
-    fecha_actual = datetime.datetime.now()
+        # Ejecutar la consulta para crear la tabla
+        cursor.execute(create_table_query)
 
-    # Consulta para insertar el mensaje en la tabla de la base de datos
-    insert_query = "INSERT INTO mensajes (fecha, valor) VALUES (%s, %s)"
-    mensaje_data = (fecha_actual, mensaje)
+        # Obtener la fecha actual
+        fecha_actual = datetime.datetime.now()
+        # Hacer commit para guardar los cambios
+        connection.commit()
+        print("Tabla creada exitosamente")
+        
+        cursor = connection.cursor()
 
-    # Ejecutar la consulta para insertar el mensaje
-    cursor.execute(insert_query, mensaje_data)
+        # Consulta para insertar el mensaje en la tabla de la base de datos
+        insert_query = f"INSERT INTO {topico} (fecha, id_dispositivo, sensor, valor) VALUES (%s, %s, %s, %s)"
+        mensaje_data = (datetime.datetime.now(), id, sensor, mensaje)
 
-    # Hacer commit para guardar los cambios
-    connection.commit()
-    print("Mensaje guardado en la base de datos")
+        # Ejecutar la consulta para insertar el mensaje
+        cursor.execute(insert_query, mensaje_data)
 
-    # Cerrar cursor y conexión
-    cursor.close()
-    connection.close()
+        # Hacer commit para guardar los cambios
+        connection.commit()
+        print("Mensaje guardado en la base de datos")
+
+        # Cerrar cursor y conexión
+        cursor.close()
+        connection.close()
+    except Exception as e:
+        print("Error al guardar el mensaje en la base de datos:", e)
+        connection.close()

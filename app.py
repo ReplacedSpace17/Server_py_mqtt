@@ -1,29 +1,24 @@
-import asyncio
-import uvicorn
+import sys, os
+from typing import List
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 import databseConn
-import mqqt_publish
-from fastapi import FastAPI
+
+from mqtt_suscriber import TopicItem, subscribe_topics
+
 
 app = FastAPI()
 
-mensaje = None
+@app.post("/subscribe/")
+async def handle_subscription(topics: List[TopicItem]):
+    result = await subscribe_topics(topics)
+    return result
 
-async def suscribe_mqtt_messages():
-    global mensaje
-    while True:
-        mensaje = await mqqt_publish.suscribe_message()
-        print("Nuevo mensaje MQTT recibido:", mensaje)
 
-@app.get("/")
-def read_root():
-    if mensaje:
-        return {"mensaje": mensaje}
-    else:
-        return {"mensaje": "No hay mensajes disponibles"}
-
+    
 if __name__ == "__main__":
+    import uvicorn
     print("-----------------Servidor iniciado----------------")
     databseConn.verificar_conexion()
     print("Esperando mensajes MQTT...")
-    asyncio.run(suscribe_mqtt_messages())
     uvicorn.run(app)
