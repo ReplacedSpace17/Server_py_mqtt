@@ -9,7 +9,7 @@ def publish_message(message):
 
 async def suscribe_message():
     import paho.mqtt.subscribe as subscribe
-    msg = subscribe.simple("lap/mensaje", hostname="192.168.1.100", port=1883)
+    msg = subscribe.simple("lap/mensaje", hostname="192.168.102.109", port=1883)
     payload = msg.payload.decode('utf-8').strip("'b")  # Convertir el payload a cadena de texto
     id_dispositivo,sensor, mensaje = payload.split(":")
     print("Id    ",id_dispositivo)# Separar el ID del dispositivo y el mensaje

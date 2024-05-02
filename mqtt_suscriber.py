@@ -9,7 +9,7 @@ class TopicItem(BaseModel):
     topico: str
 
 async def subscribe_topics(topics: List[TopicItem]):
-    async with aiomqtt.Client("localhost", port=1883) as client:
+    async with aiomqtt.Client("192.168.102.109", port=1883) as client:
         for topic_item in topics:
             await client.subscribe(topic_item.topico)
             print(f"Suscrito al tópico: {topic_item.topico}")
