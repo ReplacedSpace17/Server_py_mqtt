@@ -36,7 +36,7 @@ if __name__ == "__main__":
     import uvicorn
     print("-----------------Servidor iniciado----------------")
     # Verificar la conexión a la base de datos y a internet
-    databseConn.verificar_conexion()
+    #databseConn.verificar_conexion()
     #databseConn.verificar_conexion_internet()
     print("Esperando mensajes MQTT...")
-    uvicorn.run(app, host= "192.168.102.109", port=8000)
+    uvicorn.run("app:__main__", host= "0.0.0.0", port=8000, reload=True)
